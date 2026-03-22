@@ -7,8 +7,13 @@ import '../widgets/animation_widgets.dart';
 import '../widgets/bottom_nav.dart';
 import '../widgets/card_widget.dart';
 
+/// Represents the three data display modes: Wind, Pressure, or Temperature
 enum DataScreenType { wind, pressure, temperature }
 
+/// DataScreen displays detailed atmospheric data for Mars regions
+/// 
+/// Shows real-time sensor readings from the NASA InSight mission with animated cards
+/// and descriptions of atmospheric conditions in Elysium Planitia.
 class DataScreen extends StatefulWidget {
   const DataScreen({
     super.key,
@@ -27,12 +32,15 @@ class _DataScreenState extends State<DataScreen> {
   @override
   void initState() {
     super.initState();
+    // Fetch Mars weather data from NASA's InSight API
     _weatherData = NasaService.fetchInSightWeather();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Get configuration based on selected data type (wind, pressure, or temperature)
     final config = _configFor(widget.type);
+    // Access application state for theme and animation preferences
     final appState = AppScope.of(context);
     final animationsEnabled = appState.animationsEnabled;
 
@@ -100,6 +108,9 @@ class _DataScreenState extends State<DataScreen> {
     );
   }
 
+  /// Builds an animated header with title and back navigation
+  /// 
+  /// Fades in from bottom with optional animation
   Widget _buildAnimatedHeader(
     BuildContext context,
     _DataScreenConfig config,
@@ -118,6 +129,10 @@ class _DataScreenState extends State<DataScreen> {
     );
   }
 
+  /// Extracts specific metrics from NASA weather data based on data type
+  /// 
+  /// Parses API response for wind speed, pressure, or temperature readings.
+  /// Falls back to default values if API data is unavailable.
   List<_StatValue> _getStatsFromWeather(
     Map<String, dynamic> weatherData,
     DataScreenType type,
@@ -189,6 +204,10 @@ class _DataScreenState extends State<DataScreen> {
     }
   }
 
+  /// Builds individual stat cards with animations and interactive feedback
+  /// 
+  /// Each card shows a label and value with blue left border accent.
+  /// Cards animate in sequence with staggered delays.
   Widget _buildAnimatedStatCard(
     BuildContext context,
     _StatValue stat,
@@ -240,6 +259,9 @@ class _DataScreenState extends State<DataScreen> {
     );
   }
 
+  /// Builds a description card explaining the atmospheric phenomena
+  /// 
+  /// Displays detailed text about wind, pressure, or temperature on Mars.
   Widget _buildDescriptionCard(
     BuildContext context,
     _DataScreenConfig config,
@@ -267,6 +289,9 @@ class _DataScreenState extends State<DataScreen> {
     );
   }
 
+  /// Builds a theme toggle card for dark/light mode switching
+  /// 
+  /// Shows current theme state with icon and label.
   Widget _buildThemeCard(
     BuildContext context,
     AppState appState,
@@ -289,6 +314,10 @@ class _DataScreenState extends State<DataScreen> {
     );
   }
 
+  /// Returns configuration data based on selected data type
+  /// 
+  /// Defines titles, subtitles, default statistics, and descriptions
+  /// for wind, pressure, and temperature screens.
   _DataScreenConfig _configFor(DataScreenType type) {
     switch (type) {
       case DataScreenType.wind:
@@ -331,6 +360,10 @@ class _DataScreenState extends State<DataScreen> {
   }
 }
 
+/// Configuration data container for a data screen variant
+/// 
+/// Holds screen title, subtitle, default statistics, and description text.
+/// Used to configure wind, pressure, and temperature screens.
 class _DataScreenConfig {
   const _DataScreenConfig({
     required this.title,
@@ -345,6 +378,9 @@ class _DataScreenConfig {
   final String description;
 }
 
+/// Simple data class representing a single statistic
+/// 
+/// Contains a label and its corresponding value for display in stat cards.
 class _StatValue {
   const _StatValue(this.label, this.value);
 

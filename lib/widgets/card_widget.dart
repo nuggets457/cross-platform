@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import '../utils/design_size.dart';
+import 'logo_widget.dart';
 
 class ScreenFrame extends StatelessWidget {
   const ScreenFrame({
@@ -31,8 +32,25 @@ class ScreenFrame extends StatelessWidget {
           decoration: BoxDecoration(
             color: surface,
           ),
-          child: SizedBox.expand(
-            child: child,
+          child: Stack(
+            children: [
+              // Main content
+              SizedBox.expand(
+                child: child,
+              ),
+              // Logo in top-right corner
+              Positioned(
+                top: 0,
+                right: 0,
+                child: SizedBox(
+                  width: DesignSize.w(context, 80),
+                  height: DesignSize.w(context, 80),
+                  child: AetherionLogo(
+                    size: DesignSize.w(context, 80),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

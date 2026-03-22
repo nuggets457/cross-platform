@@ -13,22 +13,39 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late Future<List<Map<String, dynamic>>> _featuredPhotos;
   int _elysiumImageIndex = 0;
   late Timer _rotationTimer;
+  late AnimationController _swipeController;
+  late Animation<Offset> _swipeAnimation;
 
   @override
   void initState() {
     super.initState();
     _featuredPhotos = NasaService.fetchPhotos();
     
-    // Start auto-rotation for Elysium card - changes image every 7 seconds
-    _rotationTimer = Timer.periodic(const Duration(seconds: 7), (_) {
+    // Initialize swipe animation controller
+    _swipeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    
+    _swipeAnimation = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(-1.0, 0),
+    ).animate(CurvedAnimation(parent: _swipeController, curve: Curves.easeInOut));
+    
+    // Start auto-rotation for Elysium card - changes image every 5 seconds
+    _rotationTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       _featuredPhotos.then((photos) {
         if (photos.isNotEmpty && mounted) {
-          setState(() {
-            _elysiumImageIndex = (_elysiumImageIndex + 1) % photos.length;
+          // Play swipe animation
+          _swipeController.forward().then((_) {
+            setState(() {
+              _elysiumImageIndex = (_elysiumImageIndex + 1) % photos.length;
+            });
+            _swipeController.reset();
           });
         }
       });
@@ -38,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _rotationTimer.cancel();
+    _swipeController.dispose();
     super.dispose();
   }
 
@@ -87,20 +105,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   final elysiumImage = currentPhoto?['img_src'] as String?;
                   final imageDescription = currentPhoto?['description'] as String? ?? '';
 
-                  return Row(
-                    children: [
-                      // The lower feature cards open the richer detail screens.
-                      FeatureCard(
-                        title: 'Elysium Planitia',
-                        caption: 'Featured region with image, facts, and audio bar',
-                        imageUrl: elysiumImage,
-                        description: imageDescription,
-                        onTap: () => Navigator.pushNamed(
-                          context,
-                          AppRoutes.elysium,
+                  return SlideTransition(
+                    position: _swipeAnimation,
+                    child: Row(
+                      children: [
+                        // The lower feature cards open the richer detail screens with swipe animation
+                        FeatureCard(
+                          title: 'Elysium Planitia',
+                          caption: 'Featured region with image, facts, and audio bar',
+                          imageUrl: elysiumImage,
+                          description: imageDescription,
+                          onTap: () => Navigator.pushNamed(
+                            context,
+                            AppRoutes.elysium,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 },
               ),

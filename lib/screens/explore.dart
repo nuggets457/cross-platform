@@ -13,18 +13,12 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  // Holds the NASA photo request so the same Future is reused across rebuilds.
-  late Future<List<Map<String, dynamic>>> _photos;
-
   // Holds InSight weather API response
   late Future<Map<String, dynamic>> _weather;
 
   @override
   void initState() {
     super.initState();
-    // Load rover photos
-    _photos = NasaService.fetchPhotos();
-
     // Load InSight weather data
     _weather = NasaService.fetchInSightWeather();
   }
@@ -121,50 +115,25 @@ class _ExploreScreenState extends State<ExploreScreen> {
             const SizedBox(height: 14),
 
             Expanded(
-              child: Row(
+              child: Column(
                 children: [
-                  /// LEFT SIDE: Static explanation cards
-                  const Expanded(
-                    child: Column(
-                      children: [
-                        StatCard(
-                          label: 'Form block',
-                          value:
-                              'Mission name, rover, sol, sensor type',
-                        ),
-                        SizedBox(height: 10),
-                        StatCard(
-                          label: 'Analysis block',
-                          value:
-                              'Pattern recognition and trend summaries',
-                        ),
-                        SizedBox(height: 10),
-                        StatCard(
-                          label: 'Output block',
-                          value:
-                              'Readable weather stories and charts',
-                        ),
-                      ],
-                    ),
+                  /// Static explanation cards
+                  const StatCard(
+                    label: 'Form block',
+                    value:
+                        'Mission name, rover, sol, sensor type',
                   ),
-
-                  const SizedBox(width: 12),
-
-                  /// RIGHT SIDE: NASA images
-                  Expanded(
-                    child: FutureBuilder<List<Map<String, dynamic>>>(
-                      future: _photos,
-                      builder: (context, snapshot) {
-                        final photos =
-                            snapshot.data ?? const <Map<String, dynamic>>[];
-
-                        final imageUrl = photos.length > 1
-                            ? photos[1]['img_src'] as String?
-                            : null;
-
-                        return ImagePanel(imageUrl: imageUrl);
-                      },
-                    ),
+                  const SizedBox(height: 10),
+                  const StatCard(
+                    label: 'Analysis block',
+                    value:
+                        'Pattern recognition and trend summaries',
+                  ),
+                  const SizedBox(height: 10),
+                  const StatCard(
+                    label: 'Output block',
+                    value:
+                        'Readable weather stories and charts',
                   ),
                 ],
               ),

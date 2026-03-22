@@ -28,6 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -50,25 +51,33 @@ class _SplashScreenState extends State<SplashScreen> {
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontSize: 24,
                       letterSpacing: 1.2,
+                      color: Colors.white,
                     ),
               ),
               SizedBox(height: DesignSize.h(context, 8)),
               Text(
                 'Exploring the Heart of Mars',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white70,
+                    ),
               ),
               SizedBox(height: DesignSize.h(context, 34)),
               const SizedBox(
                 width: 30,
                 height: 30,
-                child: CircularProgressIndicator(strokeWidth: 2.4),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.4,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
               ),
               SizedBox(height: DesignSize.h(context, 34)),
               Text(
                 'Curiosity data, gallery, and mission insights are loading.',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white70,
+                    ),
               ),
             ],
           ),
